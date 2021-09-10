@@ -3,8 +3,8 @@
 
 
 
-# メモ
-# 按分処理　中区分90をどちらの大区分に割り当てるか、割合を算定
+# 科研費データベースからダウンロードした基盤Sの概要データを用いて
+# 大区分の分類を行った。
 
 graphics.off() # ウィンドウの消去
 rm(list = ls()) # 変数の消去
@@ -18,8 +18,8 @@ cat("\014") # コンソールを消去
 open_xlsx_name <- "~/Dropbox/研究IR/区分分類/KibanS_2018-2020.xlsx"
 
 # Daikubun <- c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K") # 大区分名
-# selected_category <- c("A", "C", "G") # 課題1
-selected_category <- c("C", "E", "G", "I") # 課題2
+selected_category <- c("A", "C", "G") # Task1
+# selected_category <- c("C", "E", "G", "I") # Task2
 
 k_folds <- 8 # 層化k-分割交差検証（stratified k-fold cross validation）
 
@@ -48,7 +48,7 @@ library(ggplot2)
 library(tidyr)
 library(scales)
 library(rsample)
-library(proxy) # cos類似度
+# library(proxy) # cos類似度
 
 
 # ==================================================
@@ -62,7 +62,7 @@ num_category <- length(selected_category)
 # 科研費データをオープン
 # Kaken <- read_csv(open_csv_name, locale = locale(encoding = "cp932")) # for Win
 # Kaken <- read_csv(open_csv_name) # for Mac
-Kaken <- read_excel(open_xlsx_name)
+Kaken <- read_excel(open_xlsx_name) # for Excel
 num_data <- nrow(Kaken) # 件数をカウント
 Kaken <- Kaken[order(Kaken$審査区分),] # 大区分で並び替え
 
@@ -133,7 +133,6 @@ c4 <- c3$points # 2次元の座標だけを取り出す
 #  k-means
 
 c5 <- kmeans(c1, num_category, iter.max = 100, nstart = 100) # k-meansクラスタリング
-# c5 <- kmeans(c1, num_category, iter.max = 100, nstart = 100) # k-meansクラスタリング
 c6 <- c5$cluster # クラスター分けの結果を取り出す
 
 # アルファベットは各申請書の大区分を表す。
@@ -268,7 +267,6 @@ rownames(conf_mat) <- paste("p", rownames(conf_mat), sep = "")
 
 # 正確度（Accuracy）を以下の計算式で算出
 Accuracy[k] <- sum(diag(conf_mat)) / sum(conf_mat)
-# sprintf("Accuracy: %.1f%%    (%d/%d)", Accuracy * 100, sum(diag(conf_mat)), sum(conf_mat))
 
 # 適合率（Precision）　精度、陽性的中率（PPV）
 # 真陽性／（真陽性＋偽陽性）
